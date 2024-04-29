@@ -1,0 +1,16 @@
+{
+  "name": "websocketserver",
+  "version": "0.0.1",
+  "description": "Module for websocket to use with Unity.",
+  "main": ".",
+  "scripts": {
+    "test": "npm start",
+    "start": "node server.js"
+  },
+  "author": "BogBog",
+  "license": "ISC",
+  "dependencies": {
+    "express.js": "^1.0.0",
+    "ws": "^8.17.0"
+  }
+}
