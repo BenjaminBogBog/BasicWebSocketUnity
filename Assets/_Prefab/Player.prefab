@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1882690384929304491}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17121495, y: 1e-45, z: -0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121494, y: 1e-45, z: -0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -135,7 +135,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3818022395366160438}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15331319, y: 0.000000008501481, z: -0.0000000013189826, w: 0.98817766}
+  m_LocalRotation: {x: 0.15331319, y: -0.000000008501481, z: 0.0000000013189826, w: 0.98817766}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -950,7 +950,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8912287867488052823}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17121497, y: -0, z: -0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121495, y: -0, z: -0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1075,8 +1075,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2193622425503193874}
-  - component: {fileID: 2522724103266896531}
-  - component: {fileID: 7286561357862956901}
+  - component: {fileID: 7866716303922981345}
+  - component: {fileID: 7950086325577830490}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1103,7 +1103,7 @@ Transform:
   - {fileID: 5381814804290251639}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2522724103266896531
+--- !u!114 &7866716303922981345
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1112,15 +1112,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 9000603960312561955}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Script: {fileID: 11500000, guid: c66493d9f4b3af64c86d4836895c5900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneId: 0
-  _assetId: 1782349029
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
---- !u!114 &7286561357862956901
+  initializeInput: 1
+  moveSpeed: 4
+  stopDistance: 1
+  freeLookCam: {fileID: 7594135550367162475}
+  rotateSpeed: {x: 600, y: 1.4}
+--- !u!114 &7950086325577830490
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1129,28 +1129,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 9000603960312561955}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: dc472067a8578ed47ade0b1c663f5273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 2193622425503193874}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  sendIntervalMultiplier: 1
-  timelineOffset: 0
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  playerId: 0
+  isLocalPlayer: 0
