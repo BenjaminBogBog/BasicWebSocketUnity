@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using DG.Tweening;
 
 public class NetworkManager : Singleton<NetworkManager> {
 
@@ -25,29 +26,20 @@ public class NetworkManager : Singleton<NetworkManager> {
     private void OnConnected(int id){
 
         Debug.Log("Connected to Server");
-        LocalId = id;
+
+        if(!NetworkConnection.Instance.Connected)
+            LocalId = id;
+
+        GameObject player = Spawn(playerPrefab, Vector3.zero, Quaternion.identity);
+
+        if (!NetworkConnection.Instance.Connected)
+            player.GetComponent<NetworkBehaviour>().isLocalPlayer = true;
+
+        Debug.Log("Player Values Initialized");
     }
 
-    private void OnMessageReceived(string message){
+    private void OnMessageReceived(string action,string message){
         Debug.Log("Message Received : "+message);
-
-        if (message.Equals("spawn")) 
-        {
-            try
-            {
-                Debug.Log("Spawning Player: " + playerPrefab.name);
-                GameObject player = Spawn(playerPrefab, Vector3.zero, Quaternion.identity);
-                player.GetComponent<NetworkBehaviour>().isLocalPlayer = true;
-                player.GetComponent<NetworkBehaviour>().playerId = LocalId;
-                Debug.Log("Spawn");
-            }
-            catch(Exception ex)
-            {
-                Debug.Log(ex.Message);
-            }
-            
-            
-        }
     }
 
     private void OnDisconnected(){
@@ -69,14 +61,20 @@ public class NetworkManager : Singleton<NetworkManager> {
             return null;
         }
 
-        if(newSpawn.GetComponents<NetworkBehaviour>().Length > 0)
-        {
-            networkBehaviours.AddRange(newSpawn.GetComponents<NetworkBehaviour>());
-        }
+        List<NetworkBehaviour> list = new List<NetworkBehaviour>();
 
         if(newSpawn.GetComponentsInChildren<NetworkBehaviour>() != null)
         {
-            networkBehaviours.AddRange(newSpawn.GetComponentsInChildren<NetworkBehaviour>());
+            list.AddRange(newSpawn.GetComponentsInChildren<NetworkBehaviour>());
+        }
+
+        foreach(NetworkBehaviour behaviour in list)
+        {
+            if (behaviour != null)
+            {
+                // Wait 1 tick before calling OnSpawn
+                DOVirtual.DelayedCall(1 / 60, behaviour.OnSpawn);
+            }
         }
 
         return newSpawn;

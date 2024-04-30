@@ -19,7 +19,7 @@ wss.on('connection', function connection(ws) {
    SendDesignatedId(clientId);
    RegisterTick();
 
-   SendMessage("spawn");
+   SendMessage("spawn", '');
 
    ws.on('message', (data) => {
       console.log('data received \n %o',data)
@@ -35,19 +35,19 @@ wss.on('listening',()=>{
 function SendDesignatedId(id){
    clientIds.forEach((clientId)=>{
       if(clientId == id){
-         SendMessage('id:' + id);
+         SendMessage('id', id);
       }
    })
 }
 
 function RegisterTick(){
    setInterval(()=>{
-      SendMessage('tick');
+      SendMessage('tick', '');
    },1000/60)
 }
 
-function SendMessage(message){
+function SendMessage(action, message){
    wss.clients.forEach((client)=>{
-      client.send(message)
+      client.send(`${action}:${message}`)
    })
 }

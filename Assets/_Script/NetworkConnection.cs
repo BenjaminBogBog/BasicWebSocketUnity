@@ -10,7 +10,7 @@ public class NetworkConnection : Singleton<NetworkConnection>
     public delegate void OnConnected(int id);
     public event OnConnected onConnected;
 
-    public delegate void OnMessageReceived(string message);
+    public delegate void OnMessageReceived(string action, string message);
     public event OnMessageReceived onMessageReceived;
 
     public delegate void OnDisconnected();
@@ -18,6 +18,9 @@ public class NetworkConnection : Singleton<NetworkConnection>
 
     public delegate void OnTick();
     public event OnTick onTick;
+
+    private bool _connected;
+    public bool Connected => _connected;
 
     [Header("Connection Settings")]
 
@@ -56,19 +59,24 @@ public class NetworkConnection : Singleton<NetworkConnection>
         
     }
 
-    private void IdentifyMessage(string message){
-        if (message == "tick"){
+    private void IdentifyMessage(string rawString){
+
+        string action = rawString.Split(":")[0];
+        string message = rawString.Split(":")[1];
+
+        if (action == "tick"){
             onTick?.Invoke();
             return;
         }
 
-        if(message.Split(":")[0] == "id"){
-            Debug.Log("ID: " + message.Split(":")[1]);
-            onConnected?.Invoke(int.Parse(message.Split(":")[1]));
+        if(action == "id"){
+            Debug.Log("ID: " + message);
+            onConnected?.Invoke(int.Parse(message));
+            _connected = true;
             return;
         }
 
-        onMessageReceived?.Invoke(message);
+        onMessageReceived?.Invoke(action, message);
     }
 
     public void Send(string message){
