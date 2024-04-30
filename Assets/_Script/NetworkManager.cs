@@ -1,6 +1,8 @@
-using System.Collections.Generic;
 using BogBog.Utility;
 using UnityEngine;
+using System.Collections.Generic;
+using System;
+using System.Threading;
 
 public class NetworkManager : Singleton<NetworkManager> {
 
@@ -31,11 +33,20 @@ public class NetworkManager : Singleton<NetworkManager> {
 
         if (message.Equals("spawn")) 
         {
-            Debug.Log("Spawning Player");
-            GameObject player = Spawn(playerPrefab, Vector3.zero, Quaternion.identity);
-            player.GetComponent<NetworkBehaviour>().isLocalPlayer = true;
-            player.GetComponent<NetworkBehaviour>().playerId = LocalId;
-            Debug.Log("Spawn");
+            try
+            {
+                Debug.Log("Spawning Player: " + playerPrefab.name);
+                GameObject player = Spawn(playerPrefab, Vector3.zero, Quaternion.identity);
+                player.GetComponent<NetworkBehaviour>().isLocalPlayer = true;
+                player.GetComponent<NetworkBehaviour>().playerId = LocalId;
+                Debug.Log("Spawn");
+            }
+            catch(Exception ex)
+            {
+                Debug.Log(ex.Message);
+            }
+            
+            
         }
     }
 
@@ -48,6 +59,7 @@ public class NetworkManager : Singleton<NetworkManager> {
     }
 
     public GameObject Spawn(GameObject prefab, Vector3 position, Quaternion rotation){
+
         GameObject newSpawn = Instantiate(prefab, position, rotation);
 
         Debug.Log("Spawning...");
@@ -57,7 +69,16 @@ public class NetworkManager : Singleton<NetworkManager> {
             return null;
         }
 
-        networkBehaviours.Add(newSpawn.GetComponent<NetworkBehaviour>());
+        if(newSpawn.GetComponents<NetworkBehaviour>().Length > 0)
+        {
+            networkBehaviours.AddRange(newSpawn.GetComponents<NetworkBehaviour>());
+        }
+
+        if(newSpawn.GetComponentsInChildren<NetworkBehaviour>() != null)
+        {
+            networkBehaviours.AddRange(newSpawn.GetComponentsInChildren<NetworkBehaviour>());
+        }
+
         return newSpawn;
     }
 

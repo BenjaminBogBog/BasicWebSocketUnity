@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using WebSocketSharp;
 using UnityEngine;
+using System.Threading;
 
 public class NetworkConnection : Singleton<NetworkConnection>
 {
@@ -41,7 +42,11 @@ public class NetworkConnection : Singleton<NetworkConnection>
 
         ws.OnMessage += (sender, e) =>
         {
-            IdentifyMessage(e.Data);
+            MainThreadWorker.Instance.AddAction(() =>
+            {
+                IdentifyMessage(e.Data);
+            });
+            
         };
     }
 
@@ -52,7 +57,7 @@ public class NetworkConnection : Singleton<NetworkConnection>
     }
 
     private void IdentifyMessage(string message){
-        if(message == "tick"){
+        if (message == "tick"){
             onTick?.Invoke();
             return;
         }

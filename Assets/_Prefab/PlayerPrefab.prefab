@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1882690384929304491}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17121494, y: 1e-45, z: -0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121495, y: -0, z: -0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -135,7 +135,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3818022395366160438}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15331319, y: -0.000000008501481, z: 0.0000000013189826, w: 0.98817766}
+  m_LocalRotation: {x: 0.15331319, y: -0.000000008507875, z: 0.0000000013199747, w: 0.98817766}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -628,9 +628,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66493d9f4b3af64c86d4836895c5900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerId: 0
+  isLocalPlayer: 0
   initializeInput: 1
   moveSpeed: 10
   stopDistance: 1
+  cam: {fileID: 0}
   freeLookCam: {fileID: 7594135550367162475}
   rotateSpeed: {x: 600, y: 1.4}
 --- !u!1 &7718380626510015788
@@ -658,7 +661,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7718380626510015788}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.18910751, y: -0.000000008447955, z: 0.0000000016269276, w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: -0.000000008447957, z: 0.0000000016269278, w: 0.9819564}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -950,7 +953,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8912287867488052823}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17121495, y: -0, z: -0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121497, y: -0, z: -0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1076,9 +1079,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2193622425503193874}
   - component: {fileID: 7866716303922981345}
-  - component: {fileID: 7950086325577830490}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1115,22 +1117,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66493d9f4b3af64c86d4836895c5900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerId: 0
+  isLocalPlayer: 0
   initializeInput: 1
   moveSpeed: 4
   stopDistance: 1
+  cam: {fileID: 5878486130569806598}
   freeLookCam: {fileID: 7594135550367162475}
   rotateSpeed: {x: 600, y: 1.4}
---- !u!114 &7950086325577830490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9000603960312561955}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc472067a8578ed47ade0b1c663f5273, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerId: 0
-  isLocalPlayer: 0

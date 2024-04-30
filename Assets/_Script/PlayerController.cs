@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkTransform
 {
     public bool initializeInput = true;
 
@@ -16,18 +16,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float stopDistance;
 
     [Header("Camera Settings")]
+    [SerializeField] private Camera cam;
     [SerializeField] private CinemachineFreeLook freeLookCam;
     [SerializeField] private Vector2 rotateSpeed;
     void Awake()
     {
+        Initialize();
         if (initializeInput)
         {
             Input = gameObject.AddComponent<PlayerInput>();
-
             Input.OnTap += OnPlayerClick;
         }
 
         _targetMove = transform.position;
+    }
+
+    private void Initialize()
+    {
+        if (!isLocalPlayer)
+        {
+            cam.gameObject.SetActive(false);
+            freeLookCam.gameObject.SetActive(false);
+            initializeInput = false;
+        }
     }
 
     private void OnPlayerClick()
