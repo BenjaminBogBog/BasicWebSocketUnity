@@ -16,9 +16,6 @@ public class NetworkConnection : Singleton<NetworkConnection>
     public delegate void OnDisconnected();
     public event OnDisconnected onDisconnected;
 
-    public delegate void OnTick();
-    public event OnTick onTick;
-
     private bool _connected;
     public bool Connected => _connected;
 
@@ -65,7 +62,6 @@ public class NetworkConnection : Singleton<NetworkConnection>
         string message = rawString.Split(":")[1];
 
         if (action == "tick"){
-            onTick?.Invoke();
             return;
         }
 
@@ -79,7 +75,27 @@ public class NetworkConnection : Singleton<NetworkConnection>
         onMessageReceived?.Invoke(action, message);
     }
 
-    public void Send(string message){
-        ws.Send(message);
+    public void SendToAll(string message){
+        Debug.Log("Send: " + message);
+        
+        string action = "all";
+        string fullMessage = $"{action}:{message}";
+        ws.Send(fullMessage);
+    }
+    
+    public void SendToServer(string message){
+        Debug.Log("Send: " + message);
+        
+        string action = "server";
+        string fullMessage = $"{action}:{message}";
+        ws.Send(fullMessage);
+    }
+    
+    public void SendToPlayer(int playerId, string message){
+        Debug.Log("Send: " + message);
+        
+        string action = $"player";
+        string fullMessage = $"{action}:{playerId}:{message}";
+        ws.Send(fullMessage);
     }
 }

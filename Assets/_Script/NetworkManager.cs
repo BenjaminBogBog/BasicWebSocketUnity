@@ -19,7 +19,6 @@ public class NetworkManager : Singleton<NetworkManager> {
         NetworkConnection.Instance.onConnected += OnConnected;
         NetworkConnection.Instance.onMessageReceived += OnMessageReceived;
         NetworkConnection.Instance.onDisconnected += OnDisconnected;
-        NetworkConnection.Instance.onTick += OnTick;
         NetworkConnection.Instance.Connect();
     }
 
@@ -30,6 +29,11 @@ public class NetworkManager : Singleton<NetworkManager> {
         if(!NetworkConnection.Instance.Connected)
             LocalId = id;
 
+        if(playerPrefab == null)
+        {
+            Debug.LogWarning("Player Prefab not assigned in NetworkManager");
+            return;
+        }
         GameObject player = Spawn(playerPrefab, Vector3.zero, Quaternion.identity);
 
         if (!NetworkConnection.Instance.Connected)
@@ -39,7 +43,7 @@ public class NetworkManager : Singleton<NetworkManager> {
     }
 
     private void OnMessageReceived(string action,string message){
-        Debug.Log("Message Received : "+message);
+        Debug.Log($"(MESSAGE RECEIVED) Action: {action} | Message: {message}");
     }
 
     private void OnDisconnected(){
@@ -73,7 +77,7 @@ public class NetworkManager : Singleton<NetworkManager> {
             if (behaviour != null)
             {
                 // Wait 1 tick before calling OnSpawn
-                DOVirtual.DelayedCall(1 / 60, behaviour.OnSpawn);
+                DOVirtual.DelayedCall(1 / 60f, behaviour.OnSpawn);
             }
         }
 
