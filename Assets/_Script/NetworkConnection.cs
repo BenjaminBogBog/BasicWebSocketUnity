@@ -1,3 +1,4 @@
+using System;
 using BogBog.Utility;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,32 +16,54 @@ public class NetworkConnection : Singleton<NetworkConnection>
 
     public delegate void OnDisconnected();
     public event OnDisconnected onDisconnected;
+    
+    public delegate void OnRoomCreated(NetworkRoom room);
+    public event OnRoomCreated onRoomCreated;
+    
+    public delegate void OnRoomJoined(NetworkRoom room);
+    public event OnRoomJoined onRoomJoined;
+    
+    public delegate void OnRoomUpdated(NetworkRoom room);
+    public event OnRoomUpdated onRoomUpdated;
 
+    public delegate void OnRoomLeft();
+    public event OnRoomLeft onRoomLeft;
+    
     private bool _connected;
     public bool Connected => _connected;
 
     [Header("Connection Settings")]
 
     [SerializeField] private string serverAddress;
+    
+    #if UNITY_EDITOR
+    public int testRoomJoinId = 0;
+    #endif
 
-    private WebSocket ws;
+    private WebSocket _ws;
     public void Connect()
     {
-        ws = new WebSocket(serverAddress);
-
-        ws.Connect();
-
-        ws.OnOpen += (sender, e) =>
+        if(_ws != null && _ws.IsAlive)
         {
+            Debug.LogWarning("Already connected to server.");
+            return;
+        }
+        _ws = new WebSocket(serverAddress);
+
+        _ws.Connect();
+
+        _ws.OnOpen += (sender, e) =>
+        {
+            Debug.Log("Connected to Server");
             // Waiting for message.
         };
 
-        ws.OnClose += (sender, e) =>
+        _ws.OnClose += (sender, e) =>
         {
             onDisconnected?.Invoke();
         };
 
-        ws.OnMessage += (sender, e) =>
+        _ws.OnMessage += (sender, e) =>
         {
             MainThreadWorker.Instance.AddAction(() =>
             {
@@ -52,14 +75,16 @@ public class NetworkConnection : Singleton<NetworkConnection>
 
     private void OnDisable()
     {
-        ws.Close();
-        
+        if(_ws is { IsAlive: true })
+            _ws.Close();
     }
 
     private void IdentifyMessage(string rawString){
 
-        string action = rawString.Split(":")[0];
-        string message = rawString.Split(":")[1];
+        int separatorIndex = rawString.IndexOf(':');
+
+        string action = rawString.Substring(0, separatorIndex);
+        string message = rawString.Substring(separatorIndex + 1);
 
         if (action == "tick"){
             return;
@@ -71,6 +96,43 @@ public class NetworkConnection : Singleton<NetworkConnection>
             _connected = true;
             return;
         }
+        
+        if(action == "room_created"){
+            Debug.Log("Room Created: " + message.ToString());
+            
+            NetworkRoom newRoom = JsonUtility.FromJson<NetworkRoom>(message);
+            onRoomCreated?.Invoke(newRoom);
+            return;
+        }
+        
+        if(action == "room_joined"){
+            Debug.Log("Room Joined: " + message);
+            
+            NetworkRoom joinedRoom = JsonUtility.FromJson<NetworkRoom>(message);
+            onRoomJoined?.Invoke(joinedRoom);
+            return;
+        }
+
+        if (action == "update_room")
+        {
+            Debug.Log("Room Updated: " + message);
+            
+            NetworkRoom updatedRoom = JsonUtility.FromJson<NetworkRoom>(message);
+            onRoomUpdated?.Invoke(updatedRoom);
+            return;
+        }
+        
+        if(action == "room_left"){
+            Debug.Log("Left Room");
+            onRoomLeft?.Invoke();
+            return;
+        }
+        
+        if(action == "error"){
+            Debug.LogError("Error: " + message);
+            return;
+        }
+        
 
         onMessageReceived?.Invoke(action, message);
     }
@@ -80,7 +142,7 @@ public class NetworkConnection : Singleton<NetworkConnection>
         
         string action = "all";
         string fullMessage = $"{action}:{message}";
-        ws.Send(fullMessage);
+        _ws.Send(fullMessage);
     }
     
     public void SendToServer(string message){
@@ -88,7 +150,7 @@ public class NetworkConnection : Singleton<NetworkConnection>
         
         string action = "server";
         string fullMessage = $"{action}:{message}";
-        ws.Send(fullMessage);
+        _ws.Send(fullMessage);
     }
     
     public void SendToPlayer(int playerId, string message){
@@ -96,6 +158,46 @@ public class NetworkConnection : Singleton<NetworkConnection>
         
         string action = $"player";
         string fullMessage = $"{action}:{playerId}:{message}";
-        ws.Send(fullMessage);
+        _ws.Send(fullMessage);
+    }
+
+
+    public void CreateRoom()
+    {
+        onRoomCreated += RoomCreated;
+        SendToServer($"create_room");
+    }
+
+    public void JoinRoom(int roomId)
+    {
+        SendToServer($"join_room,{roomId}");
+    }
+    
+    public void LeaveRoom()
+    {
+        SendToServer("leave_room");
+    }
+
+    private void RoomCreated(NetworkRoom room)
+    {
+        onRoomCreated -= RoomCreated;
+        Debug.Log("Room Created with ID: " + room.id);
     }
 }
+
+#region Network Data Classes
+
+[Serializable]
+public class NetworkClient
+{
+    public int id;
+}
+
+[Serializable]
+public class NetworkRoom
+{
+    public int id;
+    public List<NetworkClient> clients;
+}
+
+#endregion

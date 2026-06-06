@@ -13,13 +13,66 @@ public class NetworkManager : Singleton<NetworkManager> {
     [Header("Server Settings")]
     [SerializeField] private GameObject playerPrefab;
 
+    public NetworkRoom currentRoom;
+
     private void Start() {
 
         networkBehaviours = new List<NetworkBehaviour>();
         NetworkConnection.Instance.onConnected += OnConnected;
         NetworkConnection.Instance.onMessageReceived += OnMessageReceived;
         NetworkConnection.Instance.onDisconnected += OnDisconnected;
-        NetworkConnection.Instance.Connect();
+        
+        // ROOM MANAGEMENT
+        NetworkConnection.Instance.onRoomCreated += OnRoomCreated;
+        NetworkConnection.Instance.onRoomJoined += OnRoomJoined;
+        NetworkConnection.Instance.onRoomUpdated += OnRoomUpdated;
+        NetworkConnection.Instance.onRoomLeft += OnRoomLeft;
+    }
+
+    
+
+    private void OnDestroy()
+    {
+        NetworkConnection.Instance.onConnected -= OnConnected;
+        NetworkConnection.Instance.onMessageReceived -= OnMessageReceived;
+        NetworkConnection.Instance.onDisconnected -= OnDisconnected;
+        
+        // ROOM MANAGEMENT
+        NetworkConnection.Instance.onRoomCreated -= OnRoomCreated;
+        NetworkConnection.Instance.onRoomJoined -= OnRoomJoined;
+        NetworkConnection.Instance.onRoomUpdated -= OnRoomUpdated;
+        NetworkConnection.Instance.onRoomLeft -= OnRoomLeft;
+    }
+    
+    private void OnRoomLeft()
+    {
+        Debug.Log("Left Room");
+        currentRoom = null;
+    }
+    
+    private void OnRoomUpdated(NetworkRoom room)
+    {
+        Debug.Log($"Room Updated: {room.id}");
+        
+        Debug.Log("Current Players in Room:");
+        foreach (var player in room.clients)
+        {
+            Debug.Log($"- Player ID: {player.id}");
+        }
+        
+        currentRoom = room;
+    }
+
+    private void OnRoomJoined(NetworkRoom room)
+    {
+        Debug.Log($"Joined Room: {room.id}");
+        currentRoom = room;
+    }
+
+    private void OnRoomCreated(NetworkRoom room)
+    {
+        Debug.Log($"Room Created: {room.id}");
+        currentRoom = room;
     }
 
     private void OnConnected(int id){
